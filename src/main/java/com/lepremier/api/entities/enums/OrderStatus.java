@@ -18,9 +18,12 @@ public enum OrderStatus {
 		return code;
 	}
 	
-	public static OrderStatus valueOf(int code) {
+	public static OrderStatus valueOf(Integer code) {
+		if (code == null) {
+			return null;
+		}
 		for (OrderStatus value : OrderStatus.values()) {
-			if (value.getCode() == code) {
+			if (code.equals(value.getCode())) {
 				return value;
 			}
 		}
