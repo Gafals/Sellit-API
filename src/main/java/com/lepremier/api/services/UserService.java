@@ -11,6 +11,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import com.lepremier.api.entities.User;
+import com.lepremier.api.entities.dtos.UserDTO;
 import com.lepremier.api.repositories.UserRepository;
 import com.lepremier.api.services.exceptions.DatabaseException;
 import com.lepremier.api.services.exceptions.ResourceNotFoundException;
@@ -30,8 +31,10 @@ public class UserService {
 		return obj.orElseThrow(() -> new ResourceNotFoundException(id));
 	}
 	
-	public User userCreate(User obj) {
-		return userRepository.save(obj);
+	public User userCreate(UserDTO objDTO) {
+		objDTO.setId(null);
+		User newObj = new User(objDTO);
+		return userRepository.save(newObj);
 	}
 	
 	public void userDelete(Integer id) {

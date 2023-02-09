@@ -13,6 +13,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.lepremier.api.entities.dtos.UserDTO;
 
 @Entity
 @Table(name = "tb_user")
@@ -41,6 +42,14 @@ public class User implements Serializable {
 		this.email = email;
 		this.phone = phone;
 		this.password = password;
+	}
+	
+	public User(UserDTO objDTO) {
+		this.id = objDTO.getId();
+		this.name = objDTO.getName();
+		this.email = objDTO.getEmail();
+		this.phone = objDTO.getPhone();
+		this.password = objDTO.getPassword();
 	}
 
 	public Integer getId() {
