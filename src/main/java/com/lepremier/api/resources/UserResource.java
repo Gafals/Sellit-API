@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.lepremier.api.entities.User;
+import com.lepremier.api.entities.dtos.UserDTO;
 import com.lepremier.api.services.UserService;
 
 @RestController
@@ -32,9 +33,9 @@ public class UserResource {
 	}
 	
 	@GetMapping(value = "/{id}")
-	public ResponseEntity<User> findById(@PathVariable Integer id) {
+	public ResponseEntity<UserDTO> findById(@PathVariable Integer id) {
 		User obj = userService.findById(id);
-		return ResponseEntity.ok().body(obj);
+		return ResponseEntity.ok().body(new UserDTO(obj));
 	}
 	
 	@PostMapping
