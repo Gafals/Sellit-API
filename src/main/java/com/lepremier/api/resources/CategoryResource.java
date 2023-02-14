@@ -17,17 +17,17 @@ import com.lepremier.api.services.CategoryService;
 public class CategoryResource {
 
 	@Autowired
-	private CategoryService userService;
+	private CategoryService categoryService;
 	
 	@GetMapping
 	public ResponseEntity<List<Category>> findAll() {
-		List<Category> list = userService.findAll();
+		List<Category> list = categoryService.findAll();
 		return ResponseEntity.ok().body(list);
 	}
 	
 	@GetMapping(value = "/{id}")
 	public ResponseEntity<Category> findById(@PathVariable Integer id) {
-		Category obj = userService.findById(id);
+		Category obj = categoryService.findById(id);
 		return ResponseEntity.ok().body(obj);
 	}
 	

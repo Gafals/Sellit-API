@@ -1,19 +1,29 @@
 package com.lepremier.api.entities;
 
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
+import javax.persistence.CollectionTable;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.lepremier.api.entities.dtos.UserDTO;
+import com.lepremier.api.entities.enums.Perfil;
 
 @Entity
 @Table(name = "tb_user")
@@ -23,33 +33,39 @@ public class User implements Serializable {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id;
-	private String name;
-	private String email;
-	private String phone;
-	private String password;
+	protected Integer id;
+	protected String name;
 	
-	@JsonIgnore
-	@OneToMany(mappedBy = "client")
-	private List<Order> orders = new ArrayList<>();
+	@Column(unique = true)
+	protected String cpf;
+	
+	@Column(unique = true)
+	protected String email;
+	
+	protected String phone;
+	protected String password;
+	
+	@ElementCollection(fetch = FetchType.EAGER)
+	@CollectionTable(name = "PERFIS")
+	protected Set<Integer> perfis = new HashSet<>();
+	
+	@JsonFormat(pattern = "dd/MM/yyyy")
+	protected LocalDate dataCriacao = LocalDate.now();
+
+	
 
 	public User() {
+		addPerfil(Perfil.CLIENTE);
 	}
 
-	public User(Integer id, String name, String email, String phone, String password) {
+	public User(Integer id, String name, String cpf, String email, String phone, String password) {
 		this.id = id;
 		this.name = name;
+		this.cpf = cpf;
 		this.email = email;
 		this.phone = phone;
 		this.password = password;
-	}
-	
-	public User(UserDTO objDTO) {
-		this.id = objDTO.getId();
-		this.name = objDTO.getName();
-		this.email = objDTO.getEmail();
-		this.phone = objDTO.getPhone();
-		this.password = objDTO.getPassword();
+		addPerfil(Perfil.CLIENTE);
 	}
 
 	public Integer getId() {
@@ -66,6 +82,14 @@ public class User implements Serializable {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+	
+	public String getCpf() {
+		return cpf;
+	}
+
+	public void setCpf(String cpf) {
+		this.cpf = cpf;
 	}
 
 	public String getEmail() {
@@ -91,9 +115,22 @@ public class User implements Serializable {
 	public void setPassword(String password) {
 		this.password = password;
 	}
+	
+	public Set<Perfil> getPerfis() {
+		// TODO: Retornar os perfis no tipo Interger
+		return perfis.stream().map(x -> Perfil.toEnum(x)).collect(Collectors.toSet());
+	}
 
-	public List<Order> getOrders() {
-		return orders;
+	public void addPerfil(Perfil perfil) {
+		this.perfis.add(perfil.getCodigo());
+	}
+	
+	public LocalDate getDataCriacao() {
+		return dataCriacao;
+	}
+
+	public void setDataCriacao(LocalDate dataCriacao) {
+		this.dataCriacao = dataCriacao;
 	}
 	
 	@Override

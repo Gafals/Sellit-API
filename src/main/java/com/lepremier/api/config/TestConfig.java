@@ -7,26 +7,27 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.lepremier.api.entities.Category;
 import com.lepremier.api.entities.Order;
 import com.lepremier.api.entities.OrderItem;
 import com.lepremier.api.entities.Payment;
 import com.lepremier.api.entities.Product;
-import com.lepremier.api.entities.User;
+import com.lepremier.api.entities.Seller;
 import com.lepremier.api.entities.enums.OrderStatus;
 import com.lepremier.api.repositories.CategoryRepository;
 import com.lepremier.api.repositories.OrderItemRepository;
 import com.lepremier.api.repositories.OrderRepository;
 import com.lepremier.api.repositories.ProductRepository;
-import com.lepremier.api.repositories.UserRepository;
+import com.lepremier.api.repositories.SellerRepository;
 
 @Configuration
 @Profile("test")
 public class TestConfig implements CommandLineRunner {
 	
 	@Autowired
-	private UserRepository userRepository;
+	private SellerRepository sellerRepository;
 	
 	@Autowired
 	private OrderRepository orderRepository;
@@ -39,6 +40,9 @@ public class TestConfig implements CommandLineRunner {
 	
 	@Autowired
 	private OrderItemRepository orderItemRepository;
+	
+	@Autowired
+	private BCryptPasswordEncoder encoder;
 
 	@Override
 	public void run(String... args) throws Exception {
@@ -65,14 +69,14 @@ public class TestConfig implements CommandLineRunner {
 		
 		productRepository.saveAll(Arrays.asList(p1, p2, p3, p4, p5));
 
-		User u1 = new User(null, "Maria Brown", "maria@gmail.com", "988888888", "123456");
-		User u2 = new User(null, "Alex Green", "alex@gmail.com", "977777777", "123456");
+		Seller s1 = new Seller(null, "Gabriel", "35060213030", "gabriel@mail.com", "8899999999", encoder.encode("123456"));
+		Seller s2 = new Seller(null, "Alex Green", "88509111065", "alex@gmail.com", "977777777", encoder.encode("123456"));
 		
-		Order o1 = new Order(null, Instant.parse("2019-06-20T19:53:07Z"), OrderStatus.CANCELED, u1);
-		Order o2 = new Order(null, Instant.parse("2019-07-21T03:42:10Z"), OrderStatus.SHIPPED, u2);
-		Order o3 = new Order(null, Instant.parse("2019-07-22T15:21:22Z"), OrderStatus.WAITING_PAYMENT, u1);
+		Order o1 = new Order(null, Instant.parse("2019-06-20T19:53:07Z"), OrderStatus.CANCELED, s1);
+		Order o2 = new Order(null, Instant.parse("2019-07-21T03:42:10Z"), OrderStatus.SHIPPED, s2);
+		Order o3 = new Order(null, Instant.parse("2019-07-22T15:21:22Z"), OrderStatus.WAITING_PAYMENT, s1);
 		
-		userRepository.saveAll(Arrays.asList(u1, u2));
+		sellerRepository.saveAll(Arrays.asList(s1, s2));
 		orderRepository.saveAll(Arrays.asList(o1, o2, o3));
 		
 		OrderItem oi1 = new OrderItem(o1, p1, 2, p1.getPrice());
